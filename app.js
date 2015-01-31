@@ -39,7 +39,8 @@ app.configure('production', function(){
 
 require('./routes')(app);
 
-http.createServer(app).listen(3000);
+var port = process.env.PORT || 3000;
+http.createServer(app).listen(port);
 
 /*
 app.listen(3000, function(){
