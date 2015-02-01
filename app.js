@@ -5,7 +5,7 @@
 
 var express = require('express')
   , http = require('http');
-
+require('./app_server/models/db');
 
 var app = express();
 
