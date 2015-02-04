@@ -4,7 +4,9 @@
  */
 
 var express = require('express')
-  , http = require('http');
+  , http = require('http')
+  , session = require('express-session')
+  , RedisStore = require('connect-redis')(session);
 require('./app_server/models/db');
 
 var app = express();
@@ -23,7 +25,13 @@ app.configure(function(){
 
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'your secret here'}));
+  //app.use(express.session({ secret: 'your secret here'}));
+  app.use(express.session({
+  store: new RedisStore(),
+    secret: 'Your secret here',
+    proxy: true,
+    cookie: { secure: true }
+  }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
