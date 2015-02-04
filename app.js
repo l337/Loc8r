@@ -9,6 +9,7 @@ require('./app_server/models/db');
 
 var app = express();
 
+
 // Configuration
 
 app.configure(function(){
@@ -22,7 +23,7 @@ app.configure(function(){
 
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'your secret here' }));
+  app.use(express.session({ secret: 'your secret here'}));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
