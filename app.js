@@ -7,7 +7,7 @@ var express = require('express')
   , http = require('http')
   , session = require('express-session')
   , RedisStore = require('connect-redis')(session);
-require('./app_server/models/db');
+require('./app_api/models/db');
 
 var app = express();
 
@@ -45,8 +45,8 @@ app.configure('production', function(){
 });
 
 // Routes
-
 require('./routes')(app);
+require('./app_api/routes')(app);
 
 var port = process.env.PORT || 3000;
 http.createServer(app).listen(port);
