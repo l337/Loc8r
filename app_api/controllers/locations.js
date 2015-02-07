@@ -77,7 +77,7 @@ module.exports.locationsListByDistance = function(req, res) {
 	var lat = parseFloat(req.query.lat);
 	var point = {type:'Point', coordinates:[lng, lat]};
 	var geoOptions = {spherical:true, maxDistance:theEarth.getRadsFromDistance(20), num:10};
-	if(!lng || !lat) {
+	if((!lng && !lng !== 0) || (!lat && lat !== 0)) {
 		sendJsonResponse(res, 404, {'message':'lng and lat query parameters are required'});
 		return;
 	}
