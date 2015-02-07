@@ -7,7 +7,8 @@
     "express": "3.4.x",
     "express-session": "^1.10.2",
     "jade": "*",
-    "mongoose": "3.8.x"
+    "mongoose": "3.8.x",
+    "request": "2.36.x"
   },
   "engines": {
     "node": "0.10.x",
