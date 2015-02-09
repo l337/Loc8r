@@ -41,6 +41,38 @@ var renderDetailPage = function(req, res, locDetail) {
 	});
 };
 
+var renderReviewForm = function(req, res, locDetail) {
+	res.render('location-review-form', {
+		title: 'Review ' + locDetail.name + ' on Loc8r',
+		pageHeader: { title: 'Review ' + locDetail.name },
+		user: {
+			displayName: "Mathias"
+		}
+	});
+}
+
+var getLocationInfo = function(req, res, callback) {
+	var requestOptions, path;
+	path = "/api/locations/" + req.params.locationid;
+	requestOptions = {
+		url: apiOptions.server + path,
+		method: "GET",
+		json: {}
+	};
+	request(requestOptions, function(err, response, body) {
+		var data = body;
+		if(response.statusCode === 200) {
+			data.coords = {
+				lng: body.coords[0],
+				lat: body.coords[1]
+			};
+			callback(req, res, data);
+		} else {
+			_showError(req, res, response.statusCode);
+		}
+	});
+}
+
 var _formatDistance = function(distance) {
 	var numDistance, unit;
 	if(distance > 1) {
@@ -51,6 +83,22 @@ var _formatDistance = function(distance) {
 		unit = 'm';
 	}
 	return numDistance + unit;
+}
+
+var _showError = function(req, res, status) {
+	var title, content;
+	if(status === 404) {
+		title = "404, page not found";
+		content = "Oh dear. Looks like we can't find this page. Sorry.";
+	} else {
+		title = status + ", something's gone wrong";
+		content = "Something, somewhere, had gone just a litte bit wrong.";
+	}
+	res.status(status);
+	res.render('generic-text', {
+		title:title,
+		content:content
+	});
 }
 
 /* GET 'home' page */
@@ -81,30 +129,41 @@ module.exports.homelist = function(req, res) {
 
 /* GET 'Location info' page */
 module.exports.locationInfo = function(req, res) {
-	var requestOptions, path;
-	path = "/api/locations/" + req.params.locationid;
-	requestOptions = {
-		url: apiOptions.server + path,
-		method: "GET",
-		json:{}
-	};
-	request(requestOptions, function(err, response, body) {
-		var data = body;
-		data.coords = {
-			lng : body.coords[0],
-			lat : body.coords[1]
-		};
-		renderDetailPage(req, res, body)
-	});
+	getLocationInfo(req, res, function(req, res, responseData) {
+		renderDetailPage(req, res, responseData);
+	})
 }
 
 /* GET 'Add review' page */
 module.exports.addReview = function(req, res) {
-	res.render('location-review-form', { 
-		title:'Review Starcups on Loc8r',
-		pageHeader: { title:'Review Starcups' },
-		user: {
-			displayName: 'Mathias'
-		} 
+	getLocationInfo(req, res, function(req, res, responseData) {
+		renderReviewForm(req, res, responseData);
 	});
 }
+
+/* POST 'Add review' page */
+module.exports.doAddReview = function(req, res) {
+	var requestOptions, path, locationid, postdata;
+	locationid = req.params.locationid;
+	path = "/api/locations/" + locationid + "/reviews";
+	postdata = {
+		author: req.body.name,
+		rating: parseInt(req.body.rating, 10),
+		reviewText: req.body.review
+	};
+	requestOptions = {
+		url: apiOptions.server + path,
+		method: "POST",
+		json: postdata
+	};
+	request(requestOptions, function(err, response, body) {
+		if(response.statusCode === 201) {
+			res.redirect('/location/' + locationid);
+		} else if(response.statusCode === 400 && body.name && body.name === "ValidationError") {
+			res.redirect('/location/' + locationid + '/reviews/new?err=wal');
+		} else {
+			console.log(body);
+			_showError(req, res, response.statusCode);
+		}
+	});
+};
