@@ -2,8 +2,11 @@ angular.module('loc8rApp', []);
 var locationListCtrl = function($scope, loc8rData, geolocation) {
 	$scope.message = "Checking your location";
 	$scope.getData = function(position) {
+		var lat = position.coords.latitude,
+			lng = position.coords.longitude;
 		$scope.message = "Searching for nearby places";
-		loc8rData.success(function(data) {
+		loc8rData.locationByCoords(lat, lng)
+		.success(function(data) {
 			$scope.message = data.length > 0 ? "" : "No locations found";
 			$scope.data = { locations: data };
 		}).error(function(e) {
@@ -26,43 +29,12 @@ var locationListCtrl = function($scope, loc8rData, geolocation) {
 };
 
 var loc8rData = function($http) {
-	return $http.get('/api/locations?lng=-118.328661&lat=34.092809&maxDistance=20');
-	/*return [{
-		name: 'Jack in the Box',
-		address: '6407 W Sunset Blvd Los Angeles, CA',
-		rating: 3,
-		facilities: ['Hot drinks', 'Food', 'Premium wifi'],
-		distance: '0.7865456',
-		_id: '5370a35f2536f6785f8dfb6a'
-	}, {
-		name: 'Taco Bell',
-		address: '6254 Lexington Avenue Los Angeles, CA',
-		rating: 4,
-		facilities: ['Hot drinks', 'Food', 'Alcoholic drinks'],
-		distance: '0.296456',
-		_id: '5370a35f2536f6785f8dfb7a'
-	}, {
-		name: 'Chipotle Mexican Grill',
-		address: '1460 Vine St Los Angeles, CA',
-		rating: 5,
-		facilities: ['Chips', 'Food', 'Beer'],
-		distance: '0.896456',
-		_id: '5370a35f2536f6785f8dfb8a'
-	}, {
-		name: 'Tender Greens',
-		address: '6290 Sunset Blvd Hollywood, CA',
-		rating: 5,
-		facilities: ['Salad', 'Lunch', 'Lemonade'],
-		distance: '0.996456',
-		_id: '5370a35f2536f6785f8dfb9a'
-	}, {
-		name: 'Kabuki Japanese ',
-		address: '1545 Vine St Los Angeles, CA',
-		rating: 5,
-		facilities: ['Sushi', 'Saki', 'Fish'],
-		distance: '0.999999',
-		_id: '5370a35f2536f6785f8dfb5a'
-	}];*/
+	var locationByCoords = function(lat, lng) {
+		return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=20');
+	};
+	return {
+		locationByCoords: locationByCoords
+	};
 };
 
 var _isNumeric = function(n) {
