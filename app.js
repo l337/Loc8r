@@ -34,6 +34,7 @@ app.configure(function(){
   }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/app_client'));
 });
 
 app.configure('development', function(){
