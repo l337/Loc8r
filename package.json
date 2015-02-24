@@ -8,7 +8,8 @@
     "express-session": "^1.10.2",
     "jade": "*",
     "mongoose": "3.8.x",
-    "request": "2.36.x"
+    "request": "2.36.x",
+    "uglify-js": "^2.4.16"
   },
   "engines": {
     "node": "0.10.x",
