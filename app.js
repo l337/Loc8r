@@ -28,10 +28,10 @@ app.configure(function(){
     'app_client/common/services/geolocation.service.js',
     'app_client/common/services/loc8rData.service.js',
     'app_client/common/filters/formatDistance.filter.js',
-    'app_client/common/directive/ratingStars/ratingStars.directive.js',
-    'app_client/common/directive/footerGeneric/footerGeneric.directive.js',
     'app_client/common/directive/navigation/navigation.directive.js',
-    'app_client/common/directive/pageHeader/pageHeader.directive.js'
+    'app_client/common/directive/pageHeader/pageHeader.directive.js',
+    'app_client/common/directive/ratingStars/ratingStars.directive.js',
+    'app_client/common/directive/footerGeneric/footerGeneric.directive.js'
   ];
   var uglified = UglifyJS.minify(appClientFiles, { compress: false });
   fs.writeFile('public/angular/loc8r.min.js', uglified.code, function(err) {
